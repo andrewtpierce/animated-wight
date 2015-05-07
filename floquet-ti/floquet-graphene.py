@@ -18,14 +18,32 @@ def MatrixPlus(BandNum, kx, ky, Omega, A):
     #fill in diagonal of the matrix
     #the nth block has diagonal entries -n * Omega
     for ii in np.arange(2*BandNum + 1):
-        MatrixPlus[ii, ii] = (-BandNum + ii) * Omega
-        MatrixPlus[ii+1, ii+1] = (-BandNum + ii) * Omega
+		try:
+			MatrixPlus[2*ii, 2*ii] = (-BandNum + ii) * Omega
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii+1, 2*ii+1] = (-BandNum + ii) * Omega
+		except IndexError:
+			pass
 
-        MatrixPlus[ii+1, ii] = kx + 1j*ky
-        MatrixPlus[ii, ii+1] = kx - 1j*ky
-
-        MatrixPlus[ii + 3, ii] = A
-        MatrixPlus[ii, ii + 3] = A
+		try:
+			MatrixPlus[2*ii+1, 2*ii] = kx + 1j*ky
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii, 2*ii+1] = kx - 1j*ky
+		except IndexError:
+			pass
+		
+		try:
+			MatrixPlus[2*ii + 3, 2*ii] = A
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii, 2*ii + 3] = A
+		except IndexError:
+			pass
 
     return MatrixPlus
 
@@ -47,14 +65,32 @@ def MatrixMinus(BandNum, kx, ky, Omega, A):
     #fill in diagonal of the matrix
     #the nth block has diagonal entries -n * Omega
     for ii in np.arange(2*BandNum + 1):
-        MatrixPlus[ii, ii] = (-BandNum + ii) * Omega
-        MatrixPlus[ii+1, ii+1] = (-BandNum + ii) * Omega
-
-        MatrixPlus[ii+1, ii] = kx + 1j*ky
-        MatrixPlus[ii, ii+1] = kx - 1j*ky
-
-        MatrixPlus[ii + 1, ii + 2] = -A
-        MatrixPlus[ii + 2, ii + 1] = -A
+		try:
+			MatrixPlus[2*ii, 2*ii] = (-BandNum + ii) * Omega
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii+1, 2*ii+1] = (-BandNum + ii) * Omega
+		except IndexError:
+			pass
+		
+		try:
+			MatrixPlus[2*ii+1, 2*ii] = kx + 1j*ky
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii, 2*ii+1] = kx - 1j*ky
+		except IndexError:
+			pass
+		
+		try:
+			MatrixPlus[2*ii + 1, 2*ii + 2] = -A
+		except IndexError:
+			pass
+		try:
+			MatrixPlus[2*ii + 2, 2*ii + 1] = -A
+		except IndexError:
+			pass
 
     return MatrixPlus
 
@@ -105,11 +141,89 @@ def CalcBands_Minus(kVals, BandNum, Omega, A):
 
     return energies
 
+'''
+Notes on graphene high symmetry k points
+'''
+#Graphene lattice constant a = 1.42 A
+#Set a = 1 for convenience
+a = 1.
+
+#The following points KDirac1 and KDirac2 correspond to the usual K and K'
+#These are on the RHS of the BZ--can be rotated to any part of BZ
+KDirac1 = np.array([[2.*np.pi/3./a, 2.*np.pi/3./a]])
+KDirac2 = np.array([[2.*np.pi/3./a],[-2.*np.pi/3./a]])
+
+#gamma point at origin of BZ
+Gamma = np.array([[0., 0.]])
+
+##################################################################
+##################################################################
+##################################################################
+
+#example parameters
 BandNum = 5
 kx = 11
 ky = 12
-Omega = 13
-A = 14
+Omega = .1
+A = 1.
 
-print MatrixPlus(BandNum, kx, ky, Omega, A).real
-#print MatrixMinus(BandNum, kx, ky, Omega, A)
+#test matrix calculators
+# print MatrixPlus(BandNum, kx, ky, Omega, A)
+# print MatrixMinus(BandNum, kx, ky, Omega, A)
+
+#number of points to calculate band structure at in k space
+NumPts_kSpace = 250
+
+'''
+Form line in k-space along which the spectrum should be evaluated
+'''
+#x vals
+#kVals_x = np.linspace(Gamma[0,0], KDirac1[0,0], num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+#y vals
+#kVals_y = np.linspace(Gamma[0,1], KDirac1[0,1], num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+
+#### Here is another choice (encloses dirac pt.)
+#x vals
+#kVals_x = np.linspace(KDirac1[0,0] - KDirac1[0,0]/2., KDirac1[0,0] + KDirac1[0,0]/2., num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+#y vals
+#kVals_y = np.linspace(KDirac1[0,1] - KDirac1[0,1]/2., KDirac1[0,1] + KDirac1[0,1]/2., num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+
+#### Here is yet another choice (goes from one dirac point to the other
+#x vals
+kVals_x = np.linspace(-KDirac1[0,0], KDirac1[0,0], num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+#y vals
+kVals_y = np.linspace(-KDirac1[0,1], KDirac1[0,1], num=NumPts_kSpace).reshape((NumPts_kSpace, 1))
+
+#stack x and y kVals arrays to form the full kVals array
+kVals = np.hstack((kVals_x, kVals_y))
+
+#test kVals
+print kVals
+
+
+'''
+calculate bands along kVals in k-space
+'''
+#calculate (+) bands
+#Note: Take real part -- there will be a small imaginary part due to floating pt. calcs. However, be careful -- should add a way to make sure the imaginary part is small, since if it's large something went wrong (should be diagonalizing a hermitian operator)
+BandsPlus = CalcBands_Plus(kVals, BandNum, Omega, A).real
+
+#test CalcBands_Plus
+print BandsPlus
+print BandsPlus.shape
+
+#plot each slice in k space
+for ii in np.arange(2*(2*BandNum+1)):
+	plt.plot(BandsPlus[ii, :])
+	
+plt.show()
+
+
+
+
+
+
+
+
+
+
