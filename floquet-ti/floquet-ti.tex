@@ -1,0 +1,245 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{slashed}
+\usepackage{pdftexcmds}
+\usepackage{mathrsfs}
+\usepackage{braket}
+\usepackage{fullpage}
+\usepackage{feynmp-auto}
+
+\newcommand{\ies}[1]{ \begin{equation*} \begin{split} #1 \end{split} \end{equation*}}
+
+\title{Floquet TI calculations}
+\author{Andrew Pierce}
+\date{}
+\begin{document}
+\maketitle
+\section*{PRB 79 081406, 2009}
+\subsection*{III. Calculation of Floquet bands for a Dirac band}
+For the two dimensional Dirac band, the hamiltonian is\footnote{firt paragraph, section 3}
+\ies{
+  H(t) = \tau_z v [ k^x + A^x_{ac} (t) ] \sigma_x + v [ k^y + A^y_{ac} (t) ] \sigma_y.
+}
+$\tau_z = \pm 1$ is a generalized ``valley'' index, v is the velocity, and $\vec{\sigma}$ are the Pauli matrices. The Schrodinger equation reads
+\ies{
+  H(t) \ket{\Psi_\alpha (t) } = i \frac{\partial}{\partial t} \ket{\Psi_\alpha (t)}.
+}
+This may be rearranged using the notation of Floquet theory; introduce $\mathcal{H} (t) = H(t) - i \partial_t$ to obtain
+\ies{
+  \mathcal{H} (t) \ket{\Psi_\alpha t} = 0.
+}
+Floquet's theorem (equivalent to Bloch's theorem for spatially periodic systems) says that for time periodic $H(t)$ (in this case, time-periodic $A_{ac}$), there exists a set of states $\ket{\Phi_\alpha (t)}$ which are periodic:
+\ies{
+  \ket{\Phi_\alpha (t + T) } = \ket{\Phi_\alpha (t)},
+}
+and which satisfy the Floquet equation:
+\ies{
+  \mathcal{H}(t) \ket{\Phi_\alpha (t)} = \epsilon_\alpha \ket{\Phi_\alpha (t)},
+}
+where $\epsilon_\alpha$ are known as quasienergies.
+
+Now express the ``Floquet functions''\footnote{by analogy with Bloch functions??} by their Fourier components:
+\ies{
+  \ket{\Phi_\alpha (t) } = \sum_m e^{- i m \Omega t} \ket{ u_\alpha^m},
+}
+for some kets $\ket{u}$. 
+
+Re-expanding the Floquet operator $\mathcal{H}$ in terms of $H$ and $\partial_t$ gives
+\ies{
+  \sum_m H(t) e^{ -i m \Omega t} \ket{ u_\alpha^m } 
+  =
+  \sum_m \left[ \epsilon_\alpha + m \Omega \right] e^{-i m \Omega t} \ket{ u_\alpha^m }
+}
+Choose $A$ to be a circularly polarized field: $\vec{A} = A ( \cos \Omega t, \sin \Omega t)$. Here, $A = F/ \Omega$ and $F$ is the ``field strength.''\footnote{?? units} Then the equation reads
+\ies{
+  \sum_m \left\{
+  \tau_z v [ k^x + A \cos \Omega t ] \sigma_x + v [ k^y + A \sin \Omega t (t) ] \sigma_y
+    \right\} e^{ -i m \Omega t} \ket{ u_\alpha^m } 
+  =
+  \sum_m \left[ \epsilon_\alpha + m \Omega \right] e^{-i m \Omega t} \ket{ u_\alpha^m }.
+}
+Integration against $e^{ i n \Omega t}$ yields
+\ies{
+  &{}
+    \sum_m 
+    \frac{1}{T} \int_0^T dt \, 
+  \left\{
+  \tau_z v [ k^x + A \cos \Omega t ] \sigma_x + v [ k^y + A \sin \Omega t (t) ] \sigma_y
+    \right\}  e^{ -i (m-n) \Omega t} \ket{ u_\alpha^m } 
+    \\
+    \qquad \qquad
+  &=
+  \sum_m  \frac{1}{T} \int_0^T dt \, \left[ \epsilon_\alpha + m \Omega \right] e^{-i (m-n) \Omega t} \ket{ u_\alpha^m }
+}
+The needed integrals are 
+\ies{
+  \frac{1}{T} \int_0^T dt \, \cos \Omega t \,  e^{-i (m - n ) \Omega t}
+  &=
+  \frac{1}{2T} \int_0^T dt \, \left( e^{ i (n - m + 1 ) \Omega t} + e^{i ( n - m - 1) \Omega t} \right)
+  \\
+  &=
+  \frac{1}{2} \left( \delta_{m, n+1} + \delta_{m, n- 1} \right)
+}
+\ies{
+  \frac{1}{T} \int_0^T dt \, \sin \Omega t \,  e^{-i (m - n ) \Omega t}
+  &=
+  \frac{1}{2iT} \int_0^T dt \, \left( e^{ i (n - m + 1 ) \Omega t} - e^{i ( n - m - 1) \Omega t} \right)
+  \\
+  &=
+  \frac{1}{2i} \left( \delta_{m, n+1} - \delta_{m, n- 1} \right)
+}
+The Fourier-transformed Floquet equation becomes
+\ies{
+  &{} \sum_m \left\{
+    \tau_z v \left[ 
+      k^x \delta_{m,n} + \frac{1}{2} A (\delta_{m,n+1} + \delta_{m,n-1})
+    \right] \sigma_x
+    + v \left[
+      k^y + \frac{1}{2i} A (\delta_{m,n+1} - \delta_{m,n-1} )
+    \right] \sigma_y
+  \right\}
+  \\
+  &\qquad
+  = 
+  \sum_m
+  \left[ \epsilon_\alpha + m\Omega \right] \delta_{m,n} \ket{u^m_\alpha }
+}
+\ies{
+  \Rightarrow
+  \left[
+    (\tau_z v k^x \sigma_x + v k^y \sigma_y ) \ket{u^n_\alpha}
+    +
+    \frac{1}{2} Av (\tau_z \sigma_x- i \sigma_y ) \ket{u^{n+1}_\alpha}
+    +
+    \frac{1}{2} Av (\tau_z \sigma_x + i \sigma_y ) \ket{u^{n-1}_\alpha}
+  \right]
+  &=
+  \left[ \epsilon_\alpha + n \Omega \right] \ket{u^n_\alpha}
+}
+The left-hand side can be written in the form of a tridiagonal matrix, since the $n$ component is linked to $n-1$ and $n+1$. The $n$th block of this matrix looks like
+\ies{
+  \left( \begin{array}{ccc}
+            v (k^x \tau_z \otimes \sigma_x + k^y 1 \otimes \sigma^y)
+           &
+           \frac{1}{2} A v (\tau_z \otimes \sigma_x + i 1 \otimes \sigma_y )
+           &
+           0
+           \\
+           \frac{1}{2} A v (\tau_z \otimes \sigma_x - i 1 \otimes \sigma_y )
+           &
+           v (k^x \tau_z \otimes \sigma_x + k^y 1 \otimes \sigma^y)
+           &
+           \frac{1}{2} A v (\tau_z \otimes \sigma_x + i 1 \otimes \sigma_y ) 
+           \\
+           0
+           &
+           \frac{1}{2} A v (\tau_z \otimes \sigma_x - i 1 \otimes \sigma_y )
+           &
+           v (k^x \tau_z \otimes \sigma_x + k^y 1 \otimes \sigma^y)
+  \end{array} \right).
+}
+% Explicitly,
+% \ies{
+%   \tau_x \otimes \sigma_x -i 1 \otimes \sigma_y
+%   &=
+%   \left( \begin{array}{cccc}
+%            0&1&0&0\\
+%            1&0&0&0\\
+%            0&0&0&-1 \\
+%            0&0&-1&0 \\
+%          \end{array} \right)
+%   + \left( \begin{array}{cccc}
+%              0&-1&0&0 \\
+%              1&0&0&0 \\
+%              0&0&0&-1 \\
+%              0&0&1&0 \\
+%              \end{array} \right).
+% }
+It is easiest to study the $\tau_z$ bands separately. First takes $\tau_z = +1$. This sector of the matrix takes the form
+\ies{
+   (\tau_z \otimes \sigma_x  -i 1 \otimes \sigma_y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0&0\\
+    2&0
+  \end{array}
+  \right),
+}
+\ies{
+   (\tau_z \otimes \sigma_x + i 1 \otimes \sigma_y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0&2\\
+     0&0
+  \end{array}
+  \right),
+}
+\ies{
+  (k^x \tau_z \otimes \sigma_x + k^y 1 \otimes \sigma^y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0 & k^x - i k^y \\
+    k^x + i k^y & 0 \\
+  \end{array}
+  \right).
+}
+On the other hand, the $\tau_z = -1$ sector gives
+\ies{
+   (\tau_z \otimes \sigma_x  -i 1 \otimes \sigma_y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0&-2\\
+    0&0
+  \end{array}
+  \right),
+}
+\ies{
+   (\tau_z \otimes \sigma_x + i 1 \otimes \sigma_y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0&0\\
+     -2&0
+  \end{array}
+  \right),
+}
+\ies{
+  (k^x \tau_z \otimes \sigma_x + k^y 1 \otimes \sigma^y)
+  \rightarrow
+  \left(
+  \begin{array}{cc}
+    0 & k^x - i k^y \\
+    k^x + i k^y & 0 \\
+  \end{array}
+  \right).
+}
+Setting $v=1$, this block of the matrix equation takes the forms
+\ies{
+  \tau_z = +1 &: \;
+  \left( \begin{array}{cccccc}
+           -(n-1)\Omega & k^x - i k^y  & 0 & A & 0  &  0 \\
+           k^x + ik^y & -(n-1) \Omega& 0 & 0 & 0 & 0 \\
+           0 & 0 &  -n \Omega & k^x - i k^y & 0 & A  \\
+           A & 0 & k^x + i k^y & - n \Omega & 0 & 0 \\
+           0 & 0 & 0 & 0 & -(n+1) \Omega & k^x - i k^y \\
+           0 & 0 & A & 0 & k^x + i k^y & - (n+1) \Omega \\
+  \end{array} \right)
+  \\
+  \tau_z = -1 &: \;
+  \left( \begin{array}{cccccc}
+           -(n-1)\Omega & k^x - i k^y  & 0 & 0 & 0  &  0 \\
+           k^x + ik^y & -(n-1) \Omega& -A & 0 & 0 & 0 \\
+           0 & -A &  -n \Omega & k^x - i k^y & 0 & 0  \\
+           0 & 0 & k^x + i k^y & - n \Omega & -A & 0 \\
+           0 & 0 & 0 & -A & -(n+1) \Omega & k^x - i k^y \\
+           0 & 0 & 0 & 0 & k^x + i k^y & - (n+1) \Omega \\
+  \end{array} \right)
+}
+Now the ``Floquet band structure'' may be approximately evaluated numerically by diagonalizing a section of this matrix in the vicinity of $n=0$. 
+\end{document}
