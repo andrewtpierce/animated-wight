@@ -150,8 +150,8 @@ a = 1.
 
 #The following points KDirac1 and KDirac2 correspond to the usual K and K'
 #These are on the RHS of the BZ--can be rotated to any part of BZ
-KDirac1 = np.array([[2.*np.pi/3./a, 2.*np.pi/3./a]])
-KDirac2 = np.array([[2.*np.pi/3./a],[-2.*np.pi/3./a]])
+KDirac1 = np.array([[2.*np.pi/3./a, 2.*np.pi/3./a/np.sqrt(3)]])
+KDirac2 = np.array([[2.*np.pi/3./a, -2.*np.pi/3./a/np.sqrt(3)]])
 
 #gamma point at origin of BZ
 Gamma = np.array([[0., 0.]])
@@ -161,11 +161,11 @@ Gamma = np.array([[0., 0.]])
 ##################################################################
 
 #example parameters
-BandNum = 5
+BandNum = 15
 kx = 11
 ky = 12
-Omega = .1
-A = 1.
+Omega= 1.
+A = 7.
 
 #test matrix calculators
 # print MatrixPlus(BandNum, kx, ky, Omega, A)
@@ -198,7 +198,7 @@ kVals_y = np.linspace(-KDirac1[0,1], KDirac1[0,1], num=NumPts_kSpace).reshape((N
 kVals = np.hstack((kVals_x, kVals_y))
 
 #test kVals
-print kVals
+#print kVals
 
 
 '''
@@ -209,13 +209,18 @@ calculate bands along kVals in k-space
 BandsPlus = CalcBands_Plus(kVals, BandNum, Omega, A).real
 
 #test CalcBands_Plus
-print BandsPlus
-print BandsPlus.shape
+# print BandsPlus
+# print BandsPlus.shape
+
+BandsMinus = CalcBands_Minus(kVals, BandNum, Omega, A).real
 
 #plot each slice in k space
 for ii in np.arange(2*(2*BandNum+1)):
-	plt.plot(BandsPlus[ii, :])
-	
+	plt.scatter(kVals[:,0],BandsPlus[ii, :])
+        plt.scatter(kVals[:,0],BandsMinus[ii, :])
+
+plt.xlim(kVals[0,0], -kVals[0,0])
+plt.ylim(-Omega/2., Omega/2.)
 plt.show()
 
 
