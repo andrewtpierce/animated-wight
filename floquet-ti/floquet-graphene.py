@@ -141,6 +141,38 @@ def CalcBands_Minus(kVals, BandNum, Omega, A):
 
     return energies
 
+def CalcBands_Sorted(kVals, BandNum, Omega, A):
+    '''
+    Combines the CalcBands_Plus and CalcBands_Minus contributions to the band structure and sorts the eigenvalues.
+    '''
+    return np.sort(
+        np.vstack((
+            CalcBands_Plus(kVals, BandNum, Omega, A),
+            CalcBands_Minus(kVals, BandNum, Omega, A)
+        )),
+        axis = 0
+    )
+
+def TimeAvgEnergy(kVals, BandNum, Omega, A):
+    '''
+    This function calculates the physical energy associated with a particular quasienergy band. Floquet theory gives the time-averaged energy E_\alpha for the quasienergy band \alpha as
+    E_\alpha = \epsilon_\alpha (\omega) - \frac{\partial \epsilon_\alpha}{\partial \omega},
+    where \omega is the drive frequency.
+    '''
+    from scipy.misc import derivative
+    
+    def quasienergy(omega):
+        return CalcBands_Sorted(kVals, BandNum, omega, A)
+
+    return quasienergy(Omega) - Omega * derivative(quasienergy, Omega, dx=1e-9)
+    
+
+
+
+
+
+
+
 '''
 Notes on graphene high symmetry k points
 '''
@@ -165,7 +197,7 @@ BandNum = 15
 kx = 11
 ky = 12
 Omega= 1.
-A = 7.
+A = .3
 
 #test matrix calculators
 # print MatrixPlus(BandNum, kx, ky, Omega, A)
@@ -204,6 +236,8 @@ kVals = np.hstack((kVals_x, kVals_y))
 '''
 calculate bands along kVals in k-space
 '''
+
+'''
 #calculate (+) bands
 #Note: Take real part -- there will be a small imaginary part due to floating pt. calcs. However, be careful -- should add a way to make sure the imaginary part is small, since if it's large something went wrong (should be diagonalizing a hermitian operator)
 BandsPlus = CalcBands_Plus(kVals, BandNum, Omega, A).real
@@ -213,7 +247,9 @@ BandsPlus = CalcBands_Plus(kVals, BandNum, Omega, A).real
 # print BandsPlus.shape
 
 BandsMinus = CalcBands_Minus(kVals, BandNum, Omega, A).real
+'''
 
+'''
 #plot each slice in k space
 for ii in np.arange(2*(2*BandNum+1)):
 	plt.scatter(kVals[:,0],BandsPlus[ii, :])
@@ -222,13 +258,12 @@ for ii in np.arange(2*(2*BandNum+1)):
 plt.xlim(kVals[0,0], -kVals[0,0])
 plt.ylim(-Omega/2., Omega/2.)
 plt.show()
+'''
 
+EBands = TimeAvgEnergy(kVals, BandNum, Omega, A)
+#EBands = CalcBands_Sorted(kVals, BandNum, Omega, A)
+for ii in np.arange(2*2*(2*BandNum+1)):
+    plt.scatter(kVals[:,0], EBands[ii, :])
 
-
-
-
-
-
-
-
-
+plt.show()
+print EBands.shape
