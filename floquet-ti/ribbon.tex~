@@ -1,0 +1,91 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{slashed}
+\usepackage{pdftexcmds}
+\usepackage{mathrsfs}
+\usepackage{braket}
+\usepackage{fullpage}
+\usepackage{feynmp-auto}
+
+\newcommand{\ies}[1]{ \begin{equation*} \begin{split} #1 \end{split} \end{equation*}}
+
+\newcommand{\hc}{\text{h.c.}}
+
+\title{Graphene ribbon 1-D band structure}
+\author{Andrew Pierce}
+\date{May 15, 2015}
+\begin{document}
+\maketitle
+
+\subsection*{Zigzag ribbon}
+The tight-banding hamiltonian for graphene is taken as\footnote{``Electronic properties of graphene''} 
+\ies{
+  H = -t \sum_{\text{n.n.}, \sigma} 
+  \left( a^\dagger_i b_j + \hc \right)
+  - t' \sum_{\text{n.n.n.}, \sigma} 
+  \left( a^\dagger_i a_j + b^\dagger_i b_j + \hc \right)
+}
+The zigzag ribbon is taken to be infinite in the $x$ direction and finite in the $y$ direction. The sums are now rewritten as a sum over sets of lattice sites that are translationally invariant in the $x$ direction and finite in the $y$ direction. The set of sites is taken to be one of the ``zigzag'' paths starting at the top of the nanoribbon and ending at the bottom. Suppose it goes from top-right to bottom-left. Abandon the $a^\dagger, b^\dagger$ notation and label the sites sequentially: $a^\dagger_{j, 1, \sigma}, \;  a^\dagger_{j,2, \sigma}, \; \ldots$.
+
+First, the nearest-neighbor sum. Consider set $j$. The odd-numbered sites couple to set $j+1$ and the even-numbered sites couple to set $j-1$. Specifically, $a^\dagger_{j, i, \sigma}$ couples to $a_{j+1, i+1, \sigma}$ if $i$ is odd, and to $a_{j-1, i-1, \sigma}$ if $i$ is even. Additionally, each of the sites along within $j$ will couple to its other neighbors in $j$. 
+
+Suppose there are $N$ full honeycomb cells in the $y$ direction. The nearest-neighbor sum may then be rewritten as
+\ies{
+  -t \sum_{\text{n.n.}, \sigma} 
+  \left( a^\dagger_i b_j + \hc \right)
+  &=
+  -t \sum_{j, \sigma} 
+  \left[ H^I_j + 
+    \frac{1}{2} \sum_{i=1}^{N+1}  \left( 
+      a^\dagger_{j,2i-1, \sigma} a_{j+1, 2i, \sigma}
+      + a^\dagger_{j, 2i, \sigma} a_{j-1, 2i-1, \sigma}
+    \right)
+    +
+    \hc
+  \right] 
+}
+where $H^I_j$ is the contribution from tunnelling between lattice sites on the same $j$:
+\ies{
+  H^I_j = a^\dagger_{j,1,\sigma} a_{j, 2, \sigma} + a^\dagger_{j, 2, \sigma} a_{j, 3, \sigma} + \ldots a^\dagger_{j, 2N+1, \sigma} a_{j, 2 N + 2, \sigma}.
+}
+In Fourier space, the nearest-neighbor terms takes the form
+\ies{
+  H_{\text{n.n.}}
+  &=
+  -t \sum_{k, \sigma}
+  \left[
+    H^I_k 
+    +
+    \frac{1}{2}
+    \sum_{i=1}^{N+1}
+    \left(
+      a^\dagger_{k, 2i-1, \sigma} a_{k, 2i, \sigma} e^{ik \sqrt{3}a/2}
+      +
+      a^\dagger_{k, 2i, \sigma} a_{k, 2i-1, \sigma} e^{-ik \sqrt{3}a/2}
+    \right)
+    + \hc
+  \right]
+  \\
+  &=
+  -t \sum_{k, \sigma} 
+  \left[
+    (H^I_k + \hc) + \sum_{i=1}^{N+1} \left(
+      a^\dagger_{k, 2i-1, \sigma} a_{k, 2i, \sigma} e^{ik \sqrt{3}a/2}
+      +
+      a^\dagger_{k, 2i, \sigma} a_{k, 2i-1, \sigma} e^{-ik \sqrt{3}a/2}
+    \right)
+  \right].
+}
+Here,
+\ies{
+  H^I_k 
+  &=
+  a^\dagger_{k,1,\sigma} a_{k, 2, \sigma} 
+  +
+  a^\dagger_{k, 2, \sigma} a_{k, 3, \sigma} 
+  + \ldots +
+  a^\dagger_{k, 2N+1, \sigma} a_{k, 2N+2, \sigma}
+}
+\end{document}
